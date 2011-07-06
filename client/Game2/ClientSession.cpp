@@ -234,17 +234,17 @@ int ClientSession::GetRank(const MainCharacter::MainCharacter *pPlayer) const
 
 	if(mMainCharacter1 != NULL) {
 		if(pPlayer == mMainCharacter1) {
-			if(mMainCharacter2->HasFinish()) {
+			if(mMainCharacter2 != NULL && mMainCharacter2->HasFinish()) {
 				if(mMainCharacter2->GetTotalTime() < mMainCharacter1->GetTotalTime()) {
 					lReturnValue++;
 				}
 			}
-			if(mMainCharacter3->HasFinish()) {
+			if(mMainCharacter3 != NULL && mMainCharacter3->HasFinish()) {
 				if(mMainCharacter3->GetTotalTime() < mMainCharacter1->GetTotalTime()) {
 					lReturnValue++;
 				}
 			}
-			if(mMainCharacter4->HasFinish()) {
+			if(mMainCharacter4 != NULL && mMainCharacter4->HasFinish()) {
 				if(mMainCharacter4->GetTotalTime() < mMainCharacter1->GetTotalTime()) {
 					lReturnValue++;
 				}
@@ -253,17 +253,17 @@ int ClientSession::GetRank(const MainCharacter::MainCharacter *pPlayer) const
 		if(pPlayer == mMainCharacter2) {
 			lReturnValue = 1;
 
-			if(mMainCharacter1->HasFinish()) {
+			if(mMainCharacter1 != NULL && mMainCharacter1->HasFinish()) {
 				if(mMainCharacter1->GetTotalTime() < mMainCharacter2->GetTotalTime()) {
 					lReturnValue++;
 				}
 			}
-			if(mMainCharacter3->HasFinish()) {
+			if(mMainCharacter3 != NULL && mMainCharacter3->HasFinish()) {
 				if(mMainCharacter3->GetTotalTime() < mMainCharacter2->GetTotalTime()) {
 					lReturnValue++;
 				}
 			}
-			if(mMainCharacter4->HasFinish()) {
+			if(mMainCharacter4 != NULL && mMainCharacter4->HasFinish()) {
 				if(mMainCharacter4->GetTotalTime() < mMainCharacter2->GetTotalTime()) {
 					lReturnValue++;
 				}
@@ -272,17 +272,17 @@ int ClientSession::GetRank(const MainCharacter::MainCharacter *pPlayer) const
 		if(pPlayer == mMainCharacter3) {
 			lReturnValue = 1;
 
-			if(mMainCharacter1->HasFinish()) {
+			if(mMainCharacter1 != NULL && mMainCharacter1->HasFinish()) {
 				if(mMainCharacter1->GetTotalTime() < mMainCharacter3->GetTotalTime()) {
 					lReturnValue++;
 				}
 			}
-			if(mMainCharacter2->HasFinish()) {
+			if(mMainCharacter2 != NULL && mMainCharacter2->HasFinish()) {
 				if(mMainCharacter2->GetTotalTime() < mMainCharacter3->GetTotalTime()) {
 					lReturnValue++;
 				}
 			}
-			if(mMainCharacter4->HasFinish()) {
+			if(mMainCharacter2 != NULL && mMainCharacter4->HasFinish()) {
 				if(mMainCharacter4->GetTotalTime() < mMainCharacter3->GetTotalTime()) {
 					lReturnValue++;
 				}
@@ -291,17 +291,17 @@ int ClientSession::GetRank(const MainCharacter::MainCharacter *pPlayer) const
 		if(pPlayer == mMainCharacter4) {
 			lReturnValue = 1;
 
-			if(mMainCharacter1->HasFinish()) {
+			if(mMainCharacter1 != NULL && mMainCharacter1->HasFinish()) {
 				if(mMainCharacter1->GetTotalTime() < mMainCharacter4->GetTotalTime()) {
 					lReturnValue++;
 				}
 			}
-			if(mMainCharacter2->HasFinish()) {
+			if(mMainCharacter2 != NULL && mMainCharacter2->HasFinish()) {
 				if(mMainCharacter2->GetTotalTime() < mMainCharacter4->GetTotalTime()) {
 					lReturnValue++;
 				}
 			}
-			if(mMainCharacter3->HasFinish()) {
+			if(mMainCharacter3 != NULL && mMainCharacter3->HasFinish()) {
 				if(mMainCharacter3->GetTotalTime() < mMainCharacter4->GetTotalTime()) {
 					lReturnValue++;
 				}
