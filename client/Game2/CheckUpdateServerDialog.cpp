@@ -103,16 +103,16 @@ void CheckUpdateServerDialog::ShowModal(HINSTANCE hinst, HWND parent)
 					// strip updates.php from url
 					string baseUrl = url.substr(0, url.rfind('/'));
 					//FIXME: Use OS::path_t throughout.
-					std::string defaultPath((const char*)Str::PU(Config::GetInstance()->GetDefaultPath().file_string().c_str()));
+					std::string defaultPath((const char*)Str::PU(Config::GetInstance()->GetDefaultPath().string().c_str()));
 					if(DownloadUpdateDialog(baseUrl, dlPtr->updateUrl, 
 						defaultPath).ShowModal(hinst, parent)) {
 						// download was successful
 						// assemble arguments for updater
 						// theoretically, the root directory of this instance of HoverRace should just
 						// be ../ but, it would be a good idea to write code that checks this in the future
-						string curPath = boost::filesystem::current_path().file_string();
+						string curPath = boost::filesystem::current_path().string();
 						_chdir("../");
-						string hrPath = boost::filesystem::current_path().file_string();
+						string hrPath = boost::filesystem::current_path().string();
 						_chdir(curPath.c_str());
 						string patchFile = defaultPath + "\\" + dlPtr->updateUrl;
 

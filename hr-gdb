@@ -13,4 +13,4 @@ echo '==> Updating locales...'
 build/mklocale.sh po/*.gmo || exit 1
 
 echo '==> Launching HoverRace in GDB!'
-libtool --mode=execute gdb client/Game2/hoverrace "$@"
+glibtool --mode=execute gdb --args client/Game2/hoverrace -D --media-path res "$@"

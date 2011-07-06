@@ -67,7 +67,7 @@ IntroMovie::IntroMovie(HWND hwnd, HINSTANCE hinst) :
 	movieWnd = MCIWndCreateW(
 		hwnd, hinst, 
 		WS_CHILD | MCIWNDF_NOMENU | MCIWNDF_NOPLAYBAR, 
-		movieFilename.file_string().c_str());
+		movieFilename.string().c_str());
 
 	// Fill the client area.
 	RECT clientRect;
@@ -126,7 +126,7 @@ HRESULT IntroMovie::InitDirectShow(const Util::OS::path_t &movieFilename)
 
 	if (FAILED(hr = winCtl->SetVideoClippingWindow(hwnd))) return hr;
 
-	if (FAILED(hr = graph->RenderFile(movieFilename.file_string().c_str(), NULL))) return hr;
+	if (FAILED(hr = graph->RenderFile(movieFilename.string().c_str(), NULL))) return hr;
 
 	if (FAILED(hr = graph->QueryInterface(IID_IMediaControl, (void**)&mediaCtl))) return hr;
 

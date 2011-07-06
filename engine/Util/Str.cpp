@@ -78,11 +78,13 @@ wchar_t *Str::Utf8ToWide(const char *s)
 					case EILSEQ:
 						free(retv);
 						iconv_close(icv);
-						return wcsdup(L"#<Invalid UTF-8 sequence>");
+                        return NULL;
+						//return wcsdup(L"#<Invalid UTF-8 sequence>");
 					case EINVAL:
 						free(retv);
 						iconv_close(icv);
-						return wcsdup(L"#<Incomplete UTF-8 sequence>");
+                        return NULL;
+						//return wcsdup(L"#<Incomplete UTF-8 sequence>");
 					case E2BIG:
 						sz *= 2;
 						retv = (wchar_t*)realloc(retv, sz * sizeof(wchar_t));

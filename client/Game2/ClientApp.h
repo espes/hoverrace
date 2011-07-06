@@ -73,6 +73,7 @@ class ClientApp : public GameDirector
 		void MainLoop();
 
 		void NewLocalSession(RulebookPtr rules=RulebookPtr());
+		void NewSplitSession(int pSplitPlayers, RulebookPtr rules=RulebookPtr());
 
 	public:
 		// GameDirector

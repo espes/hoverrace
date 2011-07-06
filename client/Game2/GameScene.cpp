@@ -24,6 +24,7 @@
 
 #include "../../engine/Model/Track.h"
 #include "../../engine/Parcel/TrackBundle.h"
+#include "../../engine/VideoServices/SoundServer.h"
 
 #include "Control/Controller.h"
 #include "HoverScript/GamePeer.h"
@@ -37,15 +38,17 @@
 
 using namespace HoverRace::Client::HoverScript;
 using namespace HoverRace::Util;
+namespace SoundServer = HoverRace::VideoServices::SoundServer;
 
 namespace HoverRace {
 namespace Client {
 
 GameScene::GameScene(GameDirector *director, VideoServices::VideoBuffer *videoBuf,
                      Script::Core *scripting, HoverScript::GamePeer *gamePeer,
-                     RulebookPtr rules) :
+                     RulebookPtr rules, Control::InputEventController *controller,
+                     int numPlayers) :
 	SUPER(),
-	frame(0), numPlayers(1), videoBuf(videoBuf),
+	frame(0), numPlayers(numPlayers), videoBuf(videoBuf),
 	session(NULL), highObserver(NULL), highConsole(NULL)
 {
 	memset(observers, 0, sizeof(observers[0]) * MAX_OBSERVERS);
@@ -73,17 +76,45 @@ GameScene::GameScene(GameDirector *director, VideoServices::VideoBuffer *videoBu
 
 	session->SetSimulationTime(-6000);
 
-	if (!session->CreateMainCharacter(0)) {
-		Cleanup();
-		throw Exception("Main character creation failed");
+	for (int i=0; i<numPlayers; i++) {
+		if (!session->CreateMainCharacter(i)) {
+			Cleanup();
+			throw Exception("Main character creation failed");
+		}
 	}
 
-	observers[0] = Observer::New();
+	for (int i=0; i<numPlayers; i++) {
+		observers[i] = Observer::New();
+	}
+	
+	if(numPlayers == 2) {
+		observers[0]->SetSplitMode(Observer::eUpperSplit);
+		observers[1]->SetSplitMode(Observer::eLowerSplit);
+	}
+	if(numPlayers >= 3) {
+		observers[0]->SetSplitMode(Observer::eUpperLeftSplit);
+		observers[1]->SetSplitMode(Observer::eUpperRightSplit);
+		observers[2]->SetSplitMode(Observer::eLowerLeftSplit);
+	}
+	if(numPlayers == 4) {
+		observers[3]->SetSplitMode(Observer::eLowerRightSplit);
+	}
+	
 	highObserver = new HighObserver();
 
 	if (Config::GetInstance()->runtime.enableConsole) {
 		highConsole = new HighConsole(scripting, director, gamePeer, sessionPeer);
+		controller->SetConsole(highConsole);
 	}
+	
+	//set up controls
+	controller->ClearActionMap();
+	MainCharacter::MainCharacter* mcs[Util::Config::MAX_PLAYERS];
+	for (int i=0; i<numPlayers; i++) {
+		mcs[i] = session->GetPlayer(i);
+	}
+	controller->AddPlayerMaps(numPlayers, mcs);
+	controller->AddObserverMaps(observers, numPlayers);
 
 }
 
@@ -123,8 +154,14 @@ void GameScene::Render()
 			obs->RenderNormalDisplay(videoBuf, session,
 				session->GetPlayer(i),
 				simTime, session->GetBackImage());
+			
+			obs->PlaySounds(session->GetCurrentLevel(), session->GetPlayer(i));
 		}
 	}
+	
+	// Sound refresh
+	SoundServer::ApplyContinuousPlay();
+	
 }
 
 }  // namespace HoverScript

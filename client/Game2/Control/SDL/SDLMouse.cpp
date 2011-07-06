@@ -31,8 +31,8 @@ The original distribution may be found at:
 
 #include "SDLMouse.h"
 #include "SDLInputManager.h"
-#include "OISException.h"
-#include "OISEvents.h"
+#include "OIS/OISException.h"
+#include "OIS/OISEvents.h"
 
 namespace HoverRace {
 namespace Client {
@@ -164,7 +164,7 @@ void SDLMouse::capture()
 		}
 		else if( mRegainFocus == true && mGrabbed == false )
 		{	//We are gaining focus back (mouse clicked in window)
-			_setGrab(true);
+			if (grab) _setGrab(true);
 			_setVisible(false);
 			man->_setGrabMode(true);	//Notify manager
 		}

@@ -708,7 +708,7 @@ void InternetRoom::OpenChatLog()
 	catch (fs::basic_filesystem_error<fs::path> &ex) {
 		AddChatLine(_("Unable to create chat log file:"));
 		AddChatLine(_("Unable to create directory:"));
-		AddChatLine(Str::PU(logPath.file_string().c_str()));
+		AddChatLine(Str::PU(logPath.string().c_str()));
 		AddChatLine(ex.what());
 		return;
 	}
@@ -729,7 +729,7 @@ void InternetRoom::OpenChatLog()
 		chatLog = NULL;
 		AddChatLine(_("Unable to create chat log file:"));
 		AddChatLine(_("Unable to open file for writing:"));
-		AddChatLine(Str::PU(logPath.file_string().c_str()));
+		AddChatLine(Str::PU(logPath.string().c_str()));
 		return;
 	}
 

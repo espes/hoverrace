@@ -173,7 +173,7 @@ Config::Config(int verMajor, int verMinor, int verPatch, int verBuild,
 	// Set initial defaults.
 	ResetToDefaults();
 
-	Str::UP tracksDirName("Tracks");
+	Str::UP tracksDirName("tracks");
 
 	userTrackPath = homePath / tracksDirName;
 
@@ -378,7 +378,7 @@ const OS::path_t &Config::GetMediaPath() const
  */
 OS::path_t Config::GetMediaPath(const std::string &file) const
 {
-	return mediaPath / (OS::cpstr_t)Str::UP(file.c_str());
+	return mediaPath.string() / (OS::cpstr_t)Str::UP(file.c_str());
 }
 
 /**
@@ -403,7 +403,7 @@ OS::path_t Config::GetUserTrackPath(const std::string &name) const
 	if (!boost::ends_with(filename, TRACK_EXT)) {
 		filename += TRACK_EXT;
 	}
-	return userTrackPath / (OS::cpstr_t)Str::UP(filename.c_str());
+	return userTrackPath.string() / (OS::cpstr_t)Str::UP(filename.c_str());
 }
 
 /**
@@ -686,7 +686,7 @@ void Config::Save()
 	if (!fs::exists(path)) {
 		if (!fs::create_directories(path)) {
 			std::string msg("Unable to create directory: ");
-			msg += (const char*)Str::PU(path.file_string().c_str());
+			msg += (const char*)Str::PU(path.string().c_str());
 			throw ConfigExn(msg.c_str());
 		}
 	}
@@ -694,7 +694,7 @@ void Config::Save()
 	FILE *out = OS::FOpen(cfgfile, "wb");
 	if (out == NULL) {
 		std::string msg("Unable to create configuration file: ");
-		msg += (const char*)Str::PU(cfgfile.file_string().c_str());
+		msg += (const char*)Str::PU(cfgfile.string().c_str());
 		throw ConfigExn(msg.c_str());
 	}
 

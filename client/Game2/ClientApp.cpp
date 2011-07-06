@@ -147,7 +147,7 @@ ClientApp::ClientApp() :
 			// On non-Win32 we prefer to let the window manager decide the
 			// position of the window.
 			/*TODO
-			SDL_WM_SetIcon(SDL_LoadBMP(cfg->GetMediaPath("icon.bmp").file_string().c_str()), 0);
+			SDL_WM_SetIcon(SDL_LoadBMP(cfg->GetMediaPath("icon.bmp").string().c_str()), 0);
 			*/
 #		endif
 	}
@@ -259,6 +259,8 @@ void ClientApp::MainLoop()
 	while (!quit) {
 		OS::timestamp_t tick = OS::Time();
 
+		controller->Poll();
+
 		while (SDL_PollEvent(&evt)) {
 			switch (evt.type) {
 				case SDL_QUIT:
@@ -301,13 +303,37 @@ void ClientApp::NewLocalSession(RulebookPtr rules)
 
 	//TODO: Prompt the user for a track name.
 	try {
-		scene = new GameScene(this, videoBuf, scripting, gamePeer, rules);
+		scene = new GameScene(this, videoBuf, scripting, gamePeer, rules, controller);
 	}
 	catch (Parcel::ObjStreamExn&) {
 		throw;
 	}
 
 	AssignPalette();
+}
+
+void ClientApp::NewSplitSession(int pSplitPlayers, RulebookPtr rules)
+{
+	
+	//TODO: Confirm ending the current session.
+	
+	// Shut down the current session (if any).
+	if (scene != NULL) {
+		delete scene;
+		scene = NULL;
+	}
+	
+	
+	//TODO: Prompt the user for a track name.
+	try {
+		scene = new GameScene(this, videoBuf, scripting, gamePeer, rules, controller, pSplitPlayers);
+	}
+	catch (Parcel::ObjStreamExn&) {
+		throw;
+	}
+
+	AssignPalette();
+
 }
 
 void ClientApp::RequestShutdown()

@@ -5,6 +5,7 @@
 #include <inttypes.h>
 
 #define ASSERT(e) assert(e)
+#define TRACE(...)
 
 #define BYTE unsigned char
 #define BOOL int

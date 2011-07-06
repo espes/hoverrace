@@ -31,7 +31,7 @@ The original distribution may be found at:
 
 #pragma once
 
-#include "OISKeyboard.h"
+#include "OIS/OISKeyboard.h"
 #include "SDLPrereqs.h"
 
 namespace HoverRace {

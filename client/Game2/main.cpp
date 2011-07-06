@@ -196,9 +196,9 @@ static Config *InitConfig(
 	long verBuild = 0;
 	bool prerelease = true;
 	DWORD dummyHandle;
-	DWORD verInfoSize = GetFileVersionInfoSizeW(exePath.file_string().c_str(), &dummyHandle);
+	DWORD verInfoSize = GetFileVersionInfoSizeW(exePath.string().c_str(), &dummyHandle);
 	void *verInfo = malloc(verInfoSize);
-	if (GetFileVersionInfoW(exePath.file_string().c_str(), 0, verInfoSize, verInfo)) {
+	if (GetFileVersionInfoW(exePath.string().c_str(), 0, verInfoSize, verInfo)) {
 		UINT outSize;
 		void *outPtr;
 		if (VerQueryValueW(verInfo, L"\\", (LPVOID*)&outPtr, &outSize)) {
@@ -224,7 +224,8 @@ static Config *InitConfig(
 #else
 	
 	//FIXME: Extract prerelease flag from ver resource at build time.
-	return Config::Init(HR_APP_VERSION, HR_APP_VERSION_PRERELEASE, mediaPath);
+	//return Config::Init(HR_APP_VERSION, HR_APP_VERSION_PRERELEASE, mediaPath);
+    return Config::Init(1, 1, 1, 1, true, mediaPath);
 
 #endif
 }
@@ -312,7 +313,7 @@ int main(int argc, char** argv)
 	OS::path_t exePath = FindExePath();
 
 	// Change the working directory to the app's directory.
-	_wchdir(exePath.parent_path().file_string().c_str());
+	_wchdir(exePath.parent_path().string().c_str());
 
 	CoInitialize(NULL);
 #endif

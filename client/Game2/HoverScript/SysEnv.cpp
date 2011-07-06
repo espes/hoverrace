@@ -134,8 +134,8 @@ void SysEnv::RunScript(const OS::path_t &filename)
 	if (!fs::exists(scriptPath)) {
 		LogError(boost::str(
 			boost::format("Init script file not found: %s (interpreted as %s)") %
-				Str::PU(filename.file_string().c_str()) %
-				Str::PU(scriptPath.file_string().c_str())));
+				Str::PU(filename.string().c_str()) %
+				Str::PU(scriptPath.string().c_str())));
 		return;
 	}
 	

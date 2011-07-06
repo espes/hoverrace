@@ -423,7 +423,7 @@ void Core::LoadClassHelp(const std::string &className)
 	if (in == NULL) {
 #		ifdef _WIN32
 			OutputDebugStringW(L"Class help file not found: ");
-			OutputDebugStringW(filename.file_string().c_str());
+			OutputDebugStringW(filename.string().c_str());
 			OutputDebugStringW(L"\n");
 #		endif
 		return;
@@ -436,7 +436,7 @@ void Core::LoadClassHelp(const std::string &className)
 
 		yaml::MapNode *root = dynamic_cast<yaml::MapNode*>(node);
 		if (root == NULL) {
-			std::string filenamestr = (const char*)Str::PU(filename.file_string().c_str());
+			std::string filenamestr = (const char*)Str::PU(filename.string().c_str());
 			throw yaml::ParserExn((filenamestr + ": Expected root node to be a map.").c_str());
 		}
 		Help::ClassPtr cls = boost::make_shared<Help::Class>(className);

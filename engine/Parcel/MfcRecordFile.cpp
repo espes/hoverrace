@@ -118,7 +118,7 @@ void MfcRecordFileTable::Serialize(ObjStream &pArchive)
 		if((mFileTitle.Find("HoverRace track file") == -1) &&
 		   (mFileTitle.Find("Fireball object factory resource file") == -1)) {
 			char error[200];
-			sprintf(error, "Corrupt file: %s\n", pArchive.GetName().file_string().c_str());
+			sprintf(error, "Corrupt file: %s\n", pArchive.GetName().string().c_str());
 			OutputDebugString(error);
 		} else {
 			if(mRecordMax > 0) {
@@ -196,7 +196,7 @@ bool MfcRecordFile::CreateForWrite(const OS::path_t &filename, int pNbRecords, c
 		// Try yo open the file
 		//HACK: Using Str::PU here is not correct, but since this class is
 		//      deprecated anyway, it'll do.
-		lReturnValue = CFile::Open(Str::PU(filename.file_string().c_str()), modeCreate | modeWrite | typeBinary | shareExclusive);
+		lReturnValue = CFile::Open(Str::PU(filename.string().c_str()), modeCreate | modeWrite | typeBinary | shareExclusive);
 
 		if(lReturnValue) {
 			// Create the mTable
@@ -227,7 +227,7 @@ bool MfcRecordFile::OpenForWrite(const OS::path_t &filename)
 		// Try to open the file
 		//HACK: Using Str::PU here is not correct, but since this class is
 		//      deprecated anyway, it'll do.
-		lReturnValue = CFile::Open(Str::PU(filename.file_string().c_str()), modeReadWrite | typeBinary | shareExclusive);
+		lReturnValue = CFile::Open(Str::PU(filename.string().c_str()), modeReadWrite | typeBinary | shareExclusive);
 
 		if(lReturnValue) {
 			MfcObjStream lArchive(this, filename, false);
@@ -282,7 +282,7 @@ bool MfcRecordFile::OpenForRead(const OS::path_t &filename, bool pValidateChkSum
 		// Try to open the file
 		//HACK: Using Str::PU here is not correct, but since this class is
 		//      deprecated anyway, it'll do.
-		lReturnValue = CFile::Open(Str::PU(filename.file_string().c_str()), modeRead | typeBinary | shareDenyWrite, &e);
+		lReturnValue = CFile::Open(Str::PU(filename.string().c_str()), modeRead | typeBinary | shareDenyWrite, &e);
 
 		if(lReturnValue) {
 			MfcObjStream lArchive(this, filename, false);
@@ -509,7 +509,7 @@ DWORD ComputeSum(const OS::path_t &filename)
 	DWORD lReturnValue = 0;
 	DWORD lBuffer[2048];						  // 8 K of data
 
-	FILE *lFile = _wfopen(filename.file_string().c_str(), L"rb");
+	FILE *lFile = _wfopen(filename.string().c_str(), L"rb");
 
 	if(lFile != NULL) {
 		int lDataLen = fread(lBuffer, 1, sizeof(lBuffer), lFile);
@@ -591,7 +591,7 @@ ObjStreamPtr MfcRecordFile::StreamOut()
 void MfcRecordFile::FixFileAttrs(const OS::path_t &path)
 {
 	_wfinddata_t info;
-	std::wstring filename = path.file_string();
+	std::wstring filename = path.string();
 	intptr_t handle = _wfindfirst(filename.c_str(), &info);
 	if (handle != -1) {
 		if (info.time_access == -1 || info.time_create == -1 || info.time_write == -1) {

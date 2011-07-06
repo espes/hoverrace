@@ -159,27 +159,27 @@ int main(int argc, const char **argv) {
 				if(index == oldListing.end()) {
 					// file does not exist in old directory
 					// so we have to copy the file over directly
-					string oldFile = path(sourceDir).file_string() + "\\" + *it;
+					string oldFile = path(sourceDir).string() + "\\" + *it;
 					string patchName = "\\temp_patch\\" + *it; // same filename
-					string newFile = current_path().file_string() + patchName;
+					string newFile = current_path().string() + patchName;
 
 					copy_file(path(oldFile), path(newFile));
 
 					newFiles.push_back(*it);
 				} else {
 					// we must create a patch
-					string oldFile = path(sourceDir).file_string() + "/" + *index;
-					string newFile = path(targetDir).file_string() + "/" + *it;
+					string oldFile = path(sourceDir).string() + "/" + *index;
+					string newFile = path(targetDir).string() + "/" + *it;
 					// separate the actual filename to construct the patch filename and add '.bsdiff'
 					string patchName = *it + ".bsdiff";
-					string curPatchFile = current_path().file_string() + "/temp_patch/" + patchName;
+					string curPatchFile = current_path().string() + "/temp_patch/" + patchName;
 
 					// remove from old listing vector (not necessary to remove from new listing vector)
 					index = oldListing.erase(index);
 
 					// ensure directory exists
-					if(!exists("temp_patch/" + path(patchName).branch_path().file_string()))
-						create_directory("temp_patch/" + path(patchName).branch_path().file_string());
+					if(!exists("temp_patch/" + path(patchName).branch_path().string()))
+						create_directory("temp_patch/" + path(patchName).branch_path().string());
 
 					// now create the patch
 					bsdiff_create_patch((char *) curPatchFile.c_str(), (char *) oldFile.c_str(), (char *) newFile.c_str());
@@ -196,7 +196,7 @@ int main(int argc, const char **argv) {
 			}
 
 			// now, what is left in our old listing that we haven't removed, we will need to erase
-			string digestFile = current_path().file_string() + "/temp_patch/DIGEST";
+			string digestFile = current_path().string() + "/temp_patch/DIGEST";
 			FILE *digest = fopen(digestFile.c_str(), "wb");
 			printf("Creating DIGEST file...");
 
@@ -233,7 +233,7 @@ int main(int argc, const char **argv) {
 
 			ZipCreateFile(&hz, patchFile.c_str(), 0);
 
-			vector<string> filesToZip = EnumerateDirectory(current_path().file_string() + "/temp_patch/");
+			vector<string> filesToZip = EnumerateDirectory(current_path().string() + "/temp_patch/");
 
 			for(vector<string>::iterator it = filesToZip.begin(); it != filesToZip.end(); it++) {
 				int ret = ZipAddFile(hz, (*it).c_str(), ("temp_patch/" + *it).c_str());
@@ -355,7 +355,7 @@ int main(int argc, const char **argv) {
 								// strip patch directory (it may not exist)
 								size_t slashLoc = bsdiffPatch.find("/");
 
-								string absPatchLoc = current_path().file_string() + "\\" + bsdiffPatch;
+								string absPatchLoc = current_path().string() + "\\" + bsdiffPatch;
 								string fileToPatch = targetDir + "/" + (bsdiffPatch.substr(0, bsdiffLoc));
 								string newFile = fileToPatch + ".tmp"; // append .tmp for temporary file, we will move it later
 
@@ -383,7 +383,7 @@ int main(int argc, const char **argv) {
 	
 					case 'A': // add file
 						{
-							string oldFile = current_path().file_string() + "\\" + filename;
+							string oldFile = current_path().string() + "\\" + filename;
 							string newFile = targetDir + "\\" + filename;
 
 							if(exists(newFile)) {
@@ -405,16 +405,16 @@ int main(int argc, const char **argv) {
 
 				if(action != 'D') {
 					// remove extracted file
-					remove(path(current_path().file_string() + "\\" + filename));
+					remove(path(current_path().string() + "\\" + filename));
 
-					if(strcmp(path(filename).branch_path().file_string().c_str(), "") != 0) // must remove parent directory if it exists
+					if(strcmp(path(filename).branch_path().string().c_str(), "") != 0) // must remove parent directory if it exists
 						remove_all(path(filename).branch_path());
 				}
 			}
 
 			// close and remove digest
 			fclose(digest);
-			remove(path(current_path().file_string() + "\\DIGEST"));
+			remove(path(current_path().string() + "\\DIGEST"));
 
 			UnzipClose(huz);
 
@@ -440,7 +440,7 @@ vector<string> EnumerateDirectory(string directory) {
 	recursive_directory_iterator it_end;
 	recursive_directory_iterator it((path(directory)));
 	
-	string dir = string(path(directory).file_string());
+	string dir = string(path(directory).string());
 	int dirlen = dir.length();
 
 	while(it != it_end) {
@@ -448,7 +448,7 @@ vector<string> EnumerateDirectory(string directory) {
 		// then do stuff with it
 		if(is_regular(it->status())) {
 			// we have a file... now we must add it to our list
-			string item = it->path().file_string();
+			string item = it->path().string();
 			// remove directory from path
 			ret.push_back(item.substr(dirlen, string::npos));
 		}

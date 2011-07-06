@@ -102,7 +102,7 @@ inline HoverRace::Util::OS::path_t &operator/=(HoverRace::Util::OS::path_t &path
 inline HoverRace::Util::OS::path_t operator/(const HoverRace::Util::OS::path_t &path,
                                              const HoverRace::Util::Str::UP &s)
 {
-	return path / static_cast<HoverRace::Util::OS::cpstr_t>(s);
+	return path / HoverRace::Util::OS::path_t(static_cast<HoverRace::Util::OS::cpstr_t>(s));
 }
 
 #undef MR_DllDeclare

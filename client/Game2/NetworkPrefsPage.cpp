@@ -87,7 +87,7 @@ BOOL NetworkPrefsPage::DlgProc(HWND pWindow, UINT pMsgId, WPARAM pWParam, LPARAM
 
 			SetDlgItemTextW(pWindow, IDC_LOG_CHATS, Str::UW(_("&Log all chat sessions to:")));
 			SendDlgItemMessage(pWindow, IDC_LOG_CHATS, BM_SETCHECK, cfg->net.logChats, 0);
-			SetDlgItemTextW(pWindow, IDC_LOG_CHATS_TXT, cfg->net.logChatsPath.file_string().c_str());
+			SetDlgItemTextW(pWindow, IDC_LOG_CHATS_TXT, cfg->net.logChatsPath.string().c_str());
 			SetDlgItemTextW(pWindow, IDC_OPEN_FOLDER, Str::UW(_("Open Folder")));
 
 			SetDlgItemTextW(pWindow, IDC_CONNECTION_GROUP, Str::UW(_("Connection")));
@@ -112,7 +112,7 @@ BOOL NetworkPrefsPage::DlgProc(HWND pWindow, UINT pMsgId, WPARAM pWParam, LPARAM
 						if (PathSelector(_("Select a destination folder for saved chat sessions.")).
 							ShowModal(pWindow, curPath))
 						{
-							SetDlgItemTextW(pWindow, IDC_LOG_CHATS_TXT, curPath.file_string().c_str());
+							SetDlgItemTextW(pWindow, IDC_LOG_CHATS_TXT, curPath.string().c_str());
 						}
 					}
 					break;

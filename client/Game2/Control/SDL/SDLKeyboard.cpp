@@ -31,8 +31,8 @@ The original distribution may be found at:
 
 #include "SDLKeyboard.h"
 #include "SDLInputManager.h"
-#include "OISException.h"
-#include "OISEvents.h"
+#include "OIS/OISException.h"
+#include "OIS/OISEvents.h"
 #include <sstream>
 
 namespace HoverRace {
@@ -179,6 +179,8 @@ SDLKeyboard::~SDLKeyboard()
 void SDLKeyboard::capture()
 {
 	SDL_Event events[OIS_SDL_KEY_BUFF];
+	
+	SDL_PumpEvents();
 	int count = SDL_PeepEvents(events, OIS_SDL_KEY_BUFF, SDL_GETEVENT, 
 		SDL_EVENTMASK(SDL_KEYDOWN) | SDL_EVENTMASK(SDL_KEYUP));
 

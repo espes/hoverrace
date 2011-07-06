@@ -60,7 +60,7 @@ PathSelector::~PathSelector()
 bool PathSelector::ShowModal(HWND parent, OS::path_t &path)
 {
 	wchar_t browsePath[MAX_PATH] = { 0 };
-	initialPath = path.file_string();
+	initialPath = path.string();
 	BROWSEINFOW browseInfo;
 	memset(&browseInfo, 0, sizeof(browseInfo));
 	browseInfo.hwndOwner = parent;
