@@ -26,16 +26,6 @@ class MenuScene : public Scene
 		void Select();
 	
 	private:
-		enum menuDrawMode_t {
-			BASICMENU
-		};
-		
-		enum menuState_t {
-			MODESELECT,
-			PLAYERSSELECT,
-			TRACKSELECT
-		};
-		
 		ClientApp *client;
 		
 		VideoServices::VideoBuffer *videoBuf;
@@ -43,17 +33,31 @@ class MenuScene : public Scene
 
 		ObjFac1::SpriteHandle *baseFont;
 		
-		menuState_t menuState;
+		enum menuDrawMode_t {
+			BASICMENU,
+			TRACKMENU
+		};
 		menuDrawMode_t drawMode;
+		
+		enum menuState_t {
+			MODESELECT,
+			PLAYERSSELECT,
+			TRACKSELECT
+		};
+		menuState_t menuState;
+
 		int menuSelection;
 		
-		const char* basicMenuTitle;
+		const char* menuHeading;
 		std::vector<std::string> basicMenuOptions;
 		
 		int selectedPlayers;
-		
 		void StartSelectPlayers();
+		
+		std::vector<std::string> trackDescriptions;
+		VideoServices::Sprite *curTrackMap;
 		void StartSelectTrack();
+		void LoadTrackMap(std::string trackName);
 };
 
 

@@ -6,6 +6,11 @@
 #include "../../engine/VideoServices/Sprite.h"
 #include "../../engine/Model/TrackEntry.h"
 #include "../../engine/Model/TrackList.h"
+#include "../../engine/Model/Track.h"
+#include "../../engine/Model/TrackFileCommon.h"
+#include "../../engine/Parcel/TrackBundle.h"
+#include "../../engine/Parcel/RecordFile.h"
+
 #include "Rulebook.h"
 #include "Control/Controller.h"
 
@@ -18,13 +23,15 @@ using HoverRace::VideoServices::Sprite;
 using HoverRace::VideoServices::Ascii2Simple;
 using HoverRace::Model::TrackEntry;
 using HoverRace::Model::TrackList;
+using namespace HoverRace::Parcel;
 
 namespace HoverRace {
 namespace Client {
 
 MenuScene::MenuScene(ClientApp *client, VideoServices::VideoBuffer *videoBuf) :
 	SUPER(),
-	client(client), videoBuf(videoBuf), menuSelection(0), selectedPlayers(1), basicMenuTitle("")
+	client(client), videoBuf(videoBuf), menuSelection(0),
+	selectedPlayers(1), menuHeading(""), curTrackMap(NULL)
 {
 	Util::ObjectFromFactoryId baseFontId = { 1, 1000 };
 	baseFont = (ObjFac1::SpriteHandle *) Util::DllObjectFactory::CreateObject(baseFontId);
@@ -43,7 +50,7 @@ MenuScene::~MenuScene()
 
 void MenuScene::StartSelectPlayers()
 {
-	basicMenuTitle = "Number of Players";
+	menuHeading = "Num Players";
 	
 	basicMenuOptions.clear();
 	basicMenuOptions.push_back("1");
@@ -59,26 +66,69 @@ void MenuScene::StartSelectPlayers()
 
 void MenuScene::StartSelectTrack()
 {
-	basicMenuTitle = "Track";
+	menuHeading = "Track";
 	
 	Model::TrackList trackList;
 	trackList.Reload(Config::GetInstance()->GetTrackBundle());
 	
 	basicMenuOptions.clear();
+	trackDescriptions.clear();
 	BOOST_FOREACH(TrackEntry *ent, trackList) {
 		basicMenuOptions.push_back(ent->name);
+		trackDescriptions.push_back(ent->description);
 	}
 	
 	menuState = TRACKSELECT;
-	drawMode = BASICMENU;
+	drawMode = TRACKMENU;
 	
 	menuSelection = 0;
+	
+	LoadTrackMap(basicMenuOptions[menuSelection]);
+}
+
+void MenuScene::LoadTrackMap(std::string trackName)
+{
+	if (curTrackMap != NULL) delete curTrackMap;
+	
+	std::string curTrackFile = trackName+Config::TRACK_EXT;
+	Model::TrackPtr track = Config::GetInstance()->GetTrackBundle()->OpenTrack(curTrackFile);
+	Parcel::RecordFilePtr trackRecord = track->GetRecordFile();
+	if (trackRecord->GetNbRecords() >= 4) {
+		trackRecord->SelectRecord(3);
+		
+		ObjStreamPtr archivePtr(trackRecord->StreamIn());
+		ObjStream &lArchive = *archivePtr;
+
+		int lX0;
+		int lX1;
+		int lY0;
+		int lY1;
+		
+		curTrackMap = new VideoServices::Sprite;
+
+		lArchive >> lX0;
+		lArchive >> lX1;
+		lArchive >> lY0;
+		lArchive >> lY1;
+
+		curTrackMap->Serialize(lArchive);
+	} else {
+		curTrackMap = NULL;
+	}
+	
 }
 
 void MenuScene::IncrementSelection(int amount) {
+	if (amount == 0) return;
+	
 	menuSelection += amount;
 	menuSelection %= basicMenuOptions.size();
 	if (menuSelection < 0) menuSelection += basicMenuOptions.size();
+	
+	
+	if (menuState == TRACKSELECT) {
+		LoadTrackMap(basicMenuOptions[menuSelection]);
+	}
 }
 
 void MenuScene::Select() {
@@ -108,26 +158,66 @@ void MenuScene::Render()
 	viewPort.Setup(videoBuf, 0, 0, videoBuf->GetXRes(), videoBuf->GetYRes());
 	viewPort.Clear(0);
 	
+	const Sprite *font = baseFont->GetSprite();
+	
+	//blit heading
+	int titleScaling = 1;
+	int XMargin = 10;
+	int YMargin = 10;
+	font->StrBlt(XMargin, YMargin, Ascii2Simple(menuHeading), &viewPort, Sprite::eLeft, Sprite::eTop, titleScaling);
+	
+	int entryY = YMargin+font->GetItemHeight()/titleScaling+20;
+	
 	if (drawMode == BASICMENU) {
-		const Sprite *font = baseFont->GetSprite();
-		
-		int titleScaling = 1;
-		int XMargin = 10;
-		int YMargin = 10;
-		
-		font->StrBlt(XMargin, YMargin, Ascii2Simple(basicMenuTitle), &viewPort, Sprite::eLeft, Sprite::eTop, titleScaling);
-		
-		int entryYMargin = YMargin+font->GetItemHeight()/titleScaling+20;
 		int scaling = 2;
 		int lineSpace = font->GetItemHeight() / scaling + 10;
 	
 		for (int i=0; i<basicMenuOptions.size(); i++) {
 			if (i == menuSelection)  {
-				font->StrBlt(XMargin, entryYMargin+lineSpace*i, Ascii2Simple("-"), &viewPort, Sprite::eLeft, Sprite::eTop, scaling);
+				font->StrBlt(XMargin, entryY+lineSpace*i, Ascii2Simple("-"), &viewPort, Sprite::eLeft, Sprite::eTop, scaling);
 			}
-			font->StrBlt(XMargin+font->GetItemWidth()*2/scaling, entryYMargin+lineSpace*i,
+			font->StrBlt(XMargin+font->GetItemWidth()*2/scaling, entryY+lineSpace*i,
 			             Ascii2Simple(basicMenuOptions[i].c_str()), &viewPort, Sprite::eLeft, Sprite::eTop, scaling);
 		}
+	} else if (drawMode == TRACKMENU) {
+		int trackNameScaling = 2;
+		std::stringstream trackName;
+		trackName << (menuSelection+1) << ". " << basicMenuOptions[menuSelection];
+		font->StrBlt(XMargin, entryY, Ascii2Simple(trackName.str().c_str()), &viewPort, Sprite::eLeft, Sprite::eTop, trackNameScaling);
+		
+		int mapScaling = 1;
+		int contentY = entryY+font->GetItemHeight()/trackNameScaling + 10;
+		int descriptionX = XMargin;
+		if (curTrackMap != NULL) {
+			curTrackMap->Blt(XMargin, contentY, &viewPort, Sprite::eLeft, Sprite::eTop, 0, mapScaling);
+			descriptionX += curTrackMap->GetItemWidth()/mapScaling + 20;
+		}
+		
+		
+		int descriptionScaling = 3;
+		
+		std::string description = trackDescriptions[menuSelection];
+		int lineWidth = (viewPort.GetXRes()-descriptionX)/(font->GetItemWidth()/descriptionScaling);
+		int lineHeight = font->GetItemHeight()/descriptionScaling + 5;
+		
+		for (int i=0, curLineStart=0; curLineStart < description.length(); i++) {
+			size_t nextNewLinePos = description.find('\n', curLineStart);
+			int curLineLength;
+			if (nextNewLinePos != std::string::npos && nextNewLinePos < curLineStart+lineWidth) {
+				curLineLength = nextNewLinePos-curLineStart;
+			} else {
+				curLineLength = lineWidth;
+			}
+			std::string line = description.substr(curLineStart, curLineLength);
+			font->StrBlt(descriptionX, contentY+lineHeight*i,
+			             Ascii2Simple(line.c_str()), &viewPort,
+			             Sprite::eLeft, Sprite::eTop, descriptionScaling);
+			
+			curLineStart += curLineLength+1;
+		}
+		
+		
+		
 	}
 	
 }
