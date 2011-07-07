@@ -42,7 +42,8 @@ class MenuScene : public Scene
 		enum menuState_t {
 			MODESELECT,
 			PLAYERSSELECT,
-			TRACKSELECT
+			TRACKSELECT,
+			LAPSSELECT
 		};
 		menuState_t menuState;
 
@@ -54,10 +55,15 @@ class MenuScene : public Scene
 		int selectedPlayers;
 		void StartSelectPlayers();
 		
+		std::string selectedTrack;
 		std::vector<std::string> trackDescriptions;
 		VideoServices::Sprite *curTrackMap;
 		void StartSelectTrack();
 		void LoadTrackMap(std::string trackName);
+		
+		int selectedLaps;
+		void StartSelectLaps();
+		
 };
 
 

@@ -28,10 +28,13 @@ using namespace HoverRace::Parcel;
 namespace HoverRace {
 namespace Client {
 
+
+//Really bad, basic menu
 MenuScene::MenuScene(ClientApp *client, VideoServices::VideoBuffer *videoBuf) :
 	SUPER(),
 	client(client), videoBuf(videoBuf), menuSelection(0),
-	selectedPlayers(1), menuHeading(""), curTrackMap(NULL)
+	selectedPlayers(1), menuHeading(""), curTrackMap(NULL),
+	selectedLaps(0), selectedTrack("")
 {
 	Util::ObjectFromFactoryId baseFontId = { 1, 1000 };
 	baseFont = (ObjFac1::SpriteHandle *) Util::DllObjectFactory::CreateObject(baseFontId);
@@ -86,6 +89,26 @@ void MenuScene::StartSelectTrack()
 	LoadTrackMap(basicMenuOptions[menuSelection]);
 }
 
+void MenuScene::StartSelectLaps()
+{
+	menuHeading = "Laps";
+	
+	basicMenuOptions.clear();
+	basicMenuOptions.push_back("1");
+	basicMenuOptions.push_back("2");
+	basicMenuOptions.push_back("3");
+	basicMenuOptions.push_back("4");
+	basicMenuOptions.push_back("5");
+	basicMenuOptions.push_back("6");
+	basicMenuOptions.push_back("7");
+	basicMenuOptions.push_back("8");
+	
+	menuState = LAPSSELECT;
+	drawMode = BASICMENU;
+	
+	menuSelection = 0;
+}
+
 void MenuScene::LoadTrackMap(std::string trackName)
 {
 	if (curTrackMap != NULL) delete curTrackMap;
@@ -136,9 +159,12 @@ void MenuScene::Select() {
 		selectedPlayers = menuSelection+1;
 		StartSelectTrack();
 	} else if (menuState == TRACKSELECT) {
-		std::string trackFile = basicMenuOptions[menuSelection]+Config::TRACK_EXT;
+		selectedTrack = basicMenuOptions[menuSelection]+Config::TRACK_EXT;
+		StartSelectLaps();
+	} else if (menuState == LAPSSELECT) {
+		selectedLaps = menuSelection+1;
 		
-		RulebookPtr rules = boost::make_shared<Rulebook>(trackFile, 2, 0x7f);
+		RulebookPtr rules = boost::make_shared<Rulebook>(selectedTrack, selectedLaps, 0x7f);
 		
 		if (selectedPlayers == 1) {
 			client->NewLocalSession(rules);
@@ -180,11 +206,14 @@ void MenuScene::Render()
 			             Ascii2Simple(basicMenuOptions[i].c_str()), &viewPort, Sprite::eLeft, Sprite::eTop, scaling);
 		}
 	} else if (drawMode == TRACKMENU) {
+		
+		//blit track name
 		int trackNameScaling = 2;
 		std::stringstream trackName;
 		trackName << (menuSelection+1) << ". " << basicMenuOptions[menuSelection];
 		font->StrBlt(XMargin, entryY, Ascii2Simple(trackName.str().c_str()), &viewPort, Sprite::eLeft, Sprite::eTop, trackNameScaling);
 		
+		//blit track map
 		int mapScaling = 1;
 		int contentY = entryY+font->GetItemHeight()/trackNameScaling + 10;
 		int descriptionX = XMargin;
@@ -193,7 +222,7 @@ void MenuScene::Render()
 			descriptionX += curTrackMap->GetItemWidth()/mapScaling + 20;
 		}
 		
-		
+		//blit track description
 		int descriptionScaling = 3;
 		
 		std::string description = trackDescriptions[menuSelection];
