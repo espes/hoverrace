@@ -30,6 +30,8 @@ hoverrace_SOURCES = \
 	Control/InputHandler.h \
 	Control/ObserverActions.cpp \
 	Control/ObserverActions.h \
+	Control/MenuActions.cpp \
+	Control/MenuActions.h \
 	Control/UiHandler.h \
 	HoverScript/ClientScriptCore.cpp \
 	HoverScript/ClientScriptCore.h \
@@ -52,6 +54,8 @@ hoverrace_SOURCES = \
 	GameDirector.h \
 	GameScene.cpp \
 	GameScene.h \
+	MenuScene.cpp \
+	MenuScene.h \
 	HighObserver.cpp \
 	HighObserver.h \
 	Observer.cpp \

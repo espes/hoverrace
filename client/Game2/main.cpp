@@ -225,7 +225,7 @@ static Config *InitConfig(
 	
 	//FIXME: Extract prerelease flag from ver resource at build time.
 	//return Config::Init(HR_APP_VERSION, HR_APP_VERSION_PRERELEASE, mediaPath);
-    return Config::Init(1, 1, 1, 1, true, mediaPath);
+    return Config::Init(0, 0, 0, 0, true, mediaPath);
 
 #endif
 }

@@ -22,11 +22,15 @@
 
 #pragma once
 
-#include "Control/Controller.h"
 
 namespace HoverRace {
 	namespace VideoServices {
 		class VideoBuffer;
+	}
+	namespace Client {
+		namespace Control {
+			class InputEventController;
+		}
 	}
 }
 

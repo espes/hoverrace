@@ -45,8 +45,7 @@ namespace Client {
 
 GameScene::GameScene(GameDirector *director, VideoServices::VideoBuffer *videoBuf,
                      Script::Core *scripting, HoverScript::GamePeer *gamePeer,
-                     RulebookPtr rules, Control::InputEventController *controller,
-                     int numPlayers) :
+                     RulebookPtr rules, int numPlayers) :
 	SUPER(),
 	frame(0), numPlayers(numPlayers), videoBuf(videoBuf),
 	session(NULL), highObserver(NULL), highConsole(NULL)
@@ -99,6 +98,8 @@ GameScene::GameScene(GameDirector *director, VideoServices::VideoBuffer *videoBu
 	if(numPlayers == 4) {
 		observers[3]->SetSplitMode(Observer::eLowerRightSplit);
 	}
+	
+	Control::InputEventController *controller = director->GetController();
 	
 	highObserver = new HighObserver();
 
@@ -154,13 +155,26 @@ void GameScene::Render()
 			obs->RenderNormalDisplay(videoBuf, session,
 				session->GetPlayer(i),
 				simTime, session->GetBackImage());
-			
-			obs->PlaySounds(session->GetCurrentLevel(), session->GetPlayer(i));
 		}
 	}
 	
+	if (highObserver != NULL) {
+		highObserver->Render(videoBuf, session);
+	}
+	if (highConsole != NULL) {
+		highConsole->Render(videoBuf);
+	}
+	
 	// Sound refresh
-	SoundServer::ApplyContinuousPlay();
+	if(session != NULL) {
+		for (int i = 0; i < MAX_OBSERVERS; ++i) {
+			Observer *obs = observers[i];
+			if (obs != NULL) {
+				obs->PlaySounds(session->GetCurrentLevel(), session->GetPlayer(i));
+			}
+		}
+		SoundServer::ApplyContinuousPlay();
+	}
 	
 }
 

@@ -45,6 +45,7 @@
 #include "HoverScript/SysEnv.h"
 #include "ClientSession.h"
 #include "GameScene.h"
+#include "MenuScene.h"
 #include "HighObserver.h"
 #include "Rulebook.h"
 #include "Scene.h"
@@ -249,12 +250,12 @@ void ClientApp::MainLoop()
 	RulebookPtr rules = gamePeer->RequestedNewSession();
 	if (rules != NULL) {
 		NewLocalSession(rules);
+	} else {
+		NewMenu();
 	}
 
 	SDL_Surface *surface = SDL_GetVideoSurface();
 	videoBuf->NotifyWindowResChange(surface->w, surface->h, surface->pitch);
-
-	DrawPalette();
 
 	while (!quit) {
 		OS::timestamp_t tick = OS::Time();
@@ -279,7 +280,6 @@ void ClientApp::MainLoop()
 					AssignPalette();
 					break;
 			}
-			//TODO: Check for resize event and call NotifyWindowResChange().
 		}
 
 		if (scene != NULL) {
@@ -303,7 +303,7 @@ void ClientApp::NewLocalSession(RulebookPtr rules)
 
 	//TODO: Prompt the user for a track name.
 	try {
-		scene = new GameScene(this, videoBuf, scripting, gamePeer, rules, controller);
+		scene = new GameScene(this, videoBuf, scripting, gamePeer, rules);
 	}
 	catch (Parcel::ObjStreamExn&) {
 		throw;
@@ -326,7 +326,7 @@ void ClientApp::NewSplitSession(int pSplitPlayers, RulebookPtr rules)
 	
 	//TODO: Prompt the user for a track name.
 	try {
-		scene = new GameScene(this, videoBuf, scripting, gamePeer, rules, controller, pSplitPlayers);
+		scene = new GameScene(this, videoBuf, scripting, gamePeer, rules, pSplitPlayers);
 	}
 	catch (Parcel::ObjStreamExn&) {
 		throw;
@@ -334,6 +334,28 @@ void ClientApp::NewSplitSession(int pSplitPlayers, RulebookPtr rules)
 
 	AssignPalette();
 
+}
+
+void ClientApp::NewMenu()
+{
+	
+	//TODO: Confirm ending the current session.
+	
+	// Shut down the current session (if any).
+	if (scene != NULL) {
+		delete scene;
+		scene = NULL;
+	}
+	
+	try {
+		scene = new MenuScene(this, videoBuf);
+	}
+	catch (Parcel::ObjStreamExn&) {
+		throw;
+	}
+	
+	AssignPalette();
+	
 }
 
 void ClientApp::RequestShutdown()

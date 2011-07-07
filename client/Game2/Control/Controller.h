@@ -22,6 +22,7 @@
 #include "../../../engine/MainCharacter/MainCharacter.h"
 #include "../HoverScript/HighConsole.h"
 #include "../Observer.h"
+#include "../MenuScene.h"
 
 #include "ControlAction.h"
 
@@ -168,6 +169,8 @@ class InputEventController : public KeyListener, public MouseListener, public Jo
 		 * action maps.
 		 */
 		void AddObserverMaps(Observer** obs, int numObs);
+		
+		void AddMenuMap(MenuScene* scene);
 
 		/***
 		 * Convert a hash into an internationalized string.

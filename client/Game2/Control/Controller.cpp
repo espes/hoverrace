@@ -19,6 +19,7 @@
 #include "ActionPerformers.h"
 #include "ObserverActions.h"
 #include "ConsoleActions.h"
+#include "MenuActions.h"
 
 #include <sstream>
 
@@ -346,6 +347,17 @@ void InputEventController::AddObserverMaps(Observer** obs, int numObs)
 	AddActionMap(_("Camera"));
 }
 
+void InputEventController::AddMenuMap(MenuScene* scene)
+{
+	for(ActionMap::iterator it = allActionMaps[_("Menu")].begin(); it != allActionMaps[_("Menu")].end(); it++) {
+		MenuAction* x = dynamic_cast<MenuAction*>(it->second);
+		if(x != NULL)
+			x->SetMenu(scene);
+	}
+	
+	AddActionMap(_("Menu"));
+}
+
 void InputEventController::SetConsole(HighConsole* hc)
 {
 	for(ActionMap::iterator it = allActionMaps["console-keys"].begin(); it != allActionMaps["console-keys"].end(); it++) {
@@ -488,6 +500,13 @@ void InputEventController::LoadConfig()
 	cameraMap[cfg->camera_hash.panUp]   = new ObserverTiltAction(_("Pan Up"), 2, NULL, 0, 1);
 	cameraMap[cfg->camera_hash.panDown] = new ObserverTiltAction(_("Pan Down"), 3, NULL, 0, -1);
 	cameraMap[cfg->camera_hash.reset]   = new ObserverResetAction(_("Reset Camera"), 4, NULL, 0);
+	
+	/* set menu map */
+	ActionMap& menuMap = allActionMaps[_("Menu")];
+	
+	menuMap[cfg->controls_hash[0].jump] = new MenuChangeSelectionAction(_("Menu Up"), 0, NULL, -1);
+	menuMap[cfg->controls_hash[0].brake] = new MenuChangeSelectionAction(_("Menu Down"), 1, NULL, 1);
+	menuMap[cfg->controls_hash[0].motorOn] = new MenuSelectAction(_("Menu Select"), 2, NULL);
 }
 
 void InputEventController::InitInputManager(Util::OS::wnd_t mainWindow)

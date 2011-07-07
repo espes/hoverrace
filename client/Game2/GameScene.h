@@ -59,8 +59,7 @@ class GameScene : public Scene
 	public:
 		GameScene(GameDirector *director, VideoServices::VideoBuffer *videoBuf,
 			Script::Core *scripting, HoverScript::GamePeer *gamePeer,
-			RulebookPtr rules, Control::InputEventController *controller,
-			int numPlayers=1);
+			RulebookPtr rules, int numPlayers=1);
 		virtual ~GameScene();
 
 	private:
