@@ -42,7 +42,7 @@ class MenuScene : public Scene
 		menuDrawMode_t drawMode;
 		
 		enum menuState_t {
-			MODESELECT,
+			MAINMENU,
 			PLAYERSSELECT,
 			TRACKSELECT,
 			LAPSSELECT
@@ -50,9 +50,10 @@ class MenuScene : public Scene
 		menuState_t menuState;
 
 		int menuSelection;
-		
 		const char* menuHeading;
-		std::vector<std::string> basicMenuOptions;
+		std::vector<std::string> menuOptions;
+		
+		void StartMainMenu();
 		
 		int selectedPlayers;
 		void StartSelectPlayers();

@@ -50,7 +50,7 @@ MenuScene::MenuScene(ClientApp *client, VideoServices::VideoBuffer *videoBuf) :
 	controller->ClearActionMap();
 	controller->AddMenuMap(this);
 	
-	StartSelectPlayers();
+	StartMainMenu();
 }
 
 MenuScene::~MenuScene()
@@ -58,15 +58,31 @@ MenuScene::~MenuScene()
 	delete baseFont;
 }
 
+void MenuScene::StartMainMenu()
+{
+	menuHeading = "HoverRace";
+	
+	menuOptions.clear();
+	menuOptions.push_back("Local Play");
+	menuOptions.push_back("Online Play");
+	menuOptions.push_back("Controls");
+	menuOptions.push_back("Quit");
+	
+	menuState = MAINMENU;
+	drawMode = BASICMENU;
+	
+	menuSelection = 0;
+}
+
 void MenuScene::StartSelectPlayers()
 {
 	menuHeading = "Num Players";
 	
-	basicMenuOptions.clear();
-	basicMenuOptions.push_back("1");
-	basicMenuOptions.push_back("2");
-	basicMenuOptions.push_back("3");
-	basicMenuOptions.push_back("4");
+	menuOptions.clear();
+	menuOptions.push_back("1");
+	menuOptions.push_back("2");
+	menuOptions.push_back("3");
+	menuOptions.push_back("4");
 	
 	menuState = PLAYERSSELECT;
 	drawMode = BASICMENU;
@@ -81,10 +97,10 @@ void MenuScene::StartSelectTrack()
 	Model::TrackList trackList;
 	trackList.Reload(Config::GetInstance()->GetTrackBundle());
 	
-	basicMenuOptions.clear();
+	menuOptions.clear();
 	trackDescriptions.clear();
 	BOOST_FOREACH(TrackEntry *ent, trackList) {
-		basicMenuOptions.push_back(ent->name);
+		menuOptions.push_back(ent->name);
 		trackDescriptions.push_back(ent->description);
 	}
 	
@@ -93,22 +109,22 @@ void MenuScene::StartSelectTrack()
 	
 	menuSelection = 0;
 	
-	LoadTrackMap(basicMenuOptions[menuSelection]);
+	LoadTrackMap(menuOptions[menuSelection]);
 }
 
 void MenuScene::StartSelectLaps()
 {
 	menuHeading = "Laps";
 	
-	basicMenuOptions.clear();
-	basicMenuOptions.push_back("1");
-	basicMenuOptions.push_back("2");
-	basicMenuOptions.push_back("3");
-	basicMenuOptions.push_back("4");
-	basicMenuOptions.push_back("5");
-	basicMenuOptions.push_back("6");
-	basicMenuOptions.push_back("7");
-	basicMenuOptions.push_back("8");
+	menuOptions.clear();
+	menuOptions.push_back("1");
+	menuOptions.push_back("2");
+	menuOptions.push_back("3");
+	menuOptions.push_back("4");
+	menuOptions.push_back("5");
+	menuOptions.push_back("6");
+	menuOptions.push_back("7");
+	menuOptions.push_back("8");
 	
 	menuState = LAPSSELECT;
 	drawMode = BASICMENU;
@@ -152,23 +168,27 @@ void MenuScene::IncrementSelection(int amount) {
 	if (amount == 0) return;
 	
 	menuSelection += amount;
-	menuSelection %= basicMenuOptions.size();
-	if (menuSelection < 0) menuSelection += basicMenuOptions.size();
+	menuSelection %= menuOptions.size();
+	if (menuSelection < 0) menuSelection += menuOptions.size();
 	
 	
 	if (menuState == TRACKSELECT) {
-		LoadTrackMap(basicMenuOptions[menuSelection]);
+		LoadTrackMap(menuOptions[menuSelection]);
 	}
 	
 	SoundServer::Play(bumpSound);
 }
 
 void MenuScene::Select() {
-	if (menuState == PLAYERSSELECT) {
+	if (menuState == MAINMENU) {
+		if (menuSelection == 0) {
+			StartSelectPlayers();
+		}
+	} else if (menuState == PLAYERSSELECT) {
 		selectedPlayers = menuSelection+1;
 		StartSelectTrack();
 	} else if (menuState == TRACKSELECT) {
-		selectedTrack = basicMenuOptions[menuSelection]+Config::TRACK_EXT;
+		selectedTrack = menuOptions[menuSelection]+Config::TRACK_EXT;
 		StartSelectLaps();
 	} else if (menuState == LAPSSELECT) {
 		selectedLaps = menuSelection+1;
@@ -209,19 +229,19 @@ void MenuScene::Render()
 		int scaling = 2;
 		int lineSpace = font->GetItemHeight() / scaling + 10;
 	
-		for (int i=0; i<basicMenuOptions.size(); i++) {
+		for (int i=0; i<menuOptions.size(); i++) {
 			if (i == menuSelection)  {
 				font->StrBlt(XMargin, entryY+lineSpace*i, Ascii2Simple("-"), &viewPort, Sprite::eLeft, Sprite::eTop, scaling);
 			}
 			font->StrBlt(XMargin+font->GetItemWidth()*2/scaling, entryY+lineSpace*i,
-			             Ascii2Simple(basicMenuOptions[i].c_str()), &viewPort, Sprite::eLeft, Sprite::eTop, scaling);
+			             Ascii2Simple(menuOptions[i].c_str()), &viewPort, Sprite::eLeft, Sprite::eTop, scaling);
 		}
 	} else if (drawMode == TRACKMENU) {
 		
 		//blit track name
 		int trackNameScaling = 2;
 		std::stringstream trackName;
-		trackName << (menuSelection+1) << ". " << basicMenuOptions[menuSelection];
+		trackName << (menuSelection+1) << ". " << menuOptions[menuSelection];
 		font->StrBlt(XMargin, entryY, Ascii2Simple(trackName.str().c_str()), &viewPort, Sprite::eLeft, Sprite::eTop, trackNameScaling);
 		
 		//blit track map
