@@ -160,7 +160,7 @@ void MenuScene::IncrementSelection(int amount) {
 		LoadTrackMap(basicMenuOptions[menuSelection]);
 	}
 	
-	SoundServer::Play(lapSound);
+	SoundServer::Play(bumpSound);
 }
 
 void MenuScene::Select() {
@@ -182,7 +182,7 @@ void MenuScene::Select() {
 		}
 	}
 	
-	SoundServer::Play(bumpSound);
+	SoundServer::Play(lapSound);
 }
 
 void MenuScene::Advance(Util::OS::timestamp_t tick)
