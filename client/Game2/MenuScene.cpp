@@ -10,6 +10,7 @@
 #include "../../engine/Model/TrackFileCommon.h"
 #include "../../engine/Parcel/TrackBundle.h"
 #include "../../engine/Parcel/RecordFile.h"
+#include "../../engine/MainCharacter/MainCharacterRenderer.h"
 
 #include "Rulebook.h"
 #include "Control/Controller.h"
@@ -19,11 +20,11 @@
 #include "MenuScene.h"
 
 using HoverRace::Util::Config;
-using HoverRace::VideoServices::Sprite;
-using HoverRace::VideoServices::Ascii2Simple;
 using HoverRace::Model::TrackEntry;
 using HoverRace::Model::TrackList;
+using HoverRace::MainCharacter::MainCharacterRenderer;
 using namespace HoverRace::Parcel;
+using namespace HoverRace::VideoServices;
 
 namespace HoverRace {
 namespace Client {
@@ -38,6 +39,12 @@ MenuScene::MenuScene(ClientApp *client, VideoServices::VideoBuffer *videoBuf) :
 {
 	Util::ObjectFromFactoryId baseFontId = { 1, 1000 };
 	baseFont = (ObjFac1::SpriteHandle *) Util::DllObjectFactory::CreateObject(baseFontId);
+	
+	Util::ObjectFromFactoryId mainCharacterRendererId = { 1, 100 };
+	MainCharacterRenderer* mainCharacterRenderer = (MainCharacterRenderer *) Util::DllObjectFactory::CreateObject(mainCharacterRendererId);
+	
+	bumpSound = mainCharacterRenderer->GetBumpSound();
+	lapSound = mainCharacterRenderer->GetLineCrossingSound();
 	
 	Control::InputEventController *controller = client->GetController();
 	controller->ClearActionMap();
@@ -152,6 +159,8 @@ void MenuScene::IncrementSelection(int amount) {
 	if (menuState == TRACKSELECT) {
 		LoadTrackMap(basicMenuOptions[menuSelection]);
 	}
+	
+	SoundServer::Play(lapSound);
 }
 
 void MenuScene::Select() {
@@ -172,6 +181,8 @@ void MenuScene::Select() {
 			client->NewSplitSession(selectedPlayers, rules);
 		}
 	}
+	
+	SoundServer::Play(bumpSound);
 }
 
 void MenuScene::Advance(Util::OS::timestamp_t tick)

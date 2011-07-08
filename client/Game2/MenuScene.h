@@ -1,8 +1,8 @@
 #pragma once
 
-//#include "../../engine/Util/Config.h"
 #include "../../engine/ObjFacTools/SpriteHandle.h"
 #include "../../engine/VideoServices/Viewport2D.h"
+#include "../../engine/VideoServices/SoundServer.h"
 
 #include "ClientApp.h"
 
@@ -32,6 +32,8 @@ class MenuScene : public Scene
 		VideoServices::Viewport2D viewPort;
 
 		ObjFac1::SpriteHandle *baseFont;
+		VideoServices::ShortSound *bumpSound;
+		VideoServices::ShortSound *lapSound;
 		
 		enum menuDrawMode_t {
 			BASICMENU,
