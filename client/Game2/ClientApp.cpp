@@ -261,8 +261,15 @@ void ClientApp::MainLoop()
 		OS::timestamp_t tick = OS::Time();
 
 		controller->Poll();
-
-		while (SDL_PollEvent(&evt)) {
+		
+		//Make sure we don't touch control events
+		SDL_Event events[16];
+		int count = SDL_PeepEvents(events, 16, SDL_GETEVENT, SDL_ALLEVENTS ^ (SDL_EVENTMASK(SDL_KEYDOWN) |
+		                                                                      SDL_EVENTMASK(SDL_KEYUP) | 
+																			  SDL_MOUSEEVENTMASK));
+		
+		for (int i=0; i<count; i++) {
+			evt = events[i];
 			switch (evt.type) {
 				case SDL_QUIT:
 					quit = true;
