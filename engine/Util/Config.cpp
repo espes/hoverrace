@@ -64,6 +64,11 @@
 #	include "../../config.h"
 #endif
 
+#ifdef __APPLE__
+//include CodeFoundation to resolve file paths in OS X
+#   include <CoreFoundation/CoreFoundation.h>
+#endif
+
 namespace fs = boost::filesystem;
 
 #ifdef _WIN32
@@ -354,10 +359,20 @@ OS::path_t Config::GetDefaultMediaPath()
 		OS::path_t retv = L"..";
 		retv /= L"share";
 #	else
-		//TODO: Get directory from configure.
-		OS::path_t retv = "..";
-		retv /= "share";
-		retv /= PACKAGE;
+
+#       ifdef __APPLE__
+        static char* bundlePath = new char[1024];
+        CFURLGetFileSystemRepresentation(
+            CFBundleCopyResourcesDirectoryURL(
+                CFBundleGetMainBundle()),
+            true, (UInt8*)bundlePath, 1024);
+        OS::path_t retv = bundlePath;
+#       else
+        //TODO: Get directory from configure.
+        OS::path_t retv = "..";
+        retv /= "share";
+        retv /= PACKAGE;
+#       endif
 #	endif
 	return retv;
 }

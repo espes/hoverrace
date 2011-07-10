@@ -32,10 +32,6 @@
 #	define MR_DllDeclare
 #endif
 
-namespace luabind {
-	class object;
-}
-
 namespace HoverRace {
 namespace Script {
 

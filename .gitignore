@@ -3,6 +3,8 @@
 *.lo
 *.o
 
+.DS_Store
+
 # /
 /*.ncb
 /*.old

@@ -24,6 +24,8 @@
 #include "ObstacleCollisionReport.h"
 #include "../Util/FastArray.h"
 
+#include <algorithm>
+
 namespace HoverRace {
 namespace Model {
 
@@ -48,7 +50,7 @@ MR_Int32 ObstacleCollisionReport::StepHeight() const
 	ASSERT(mInMaze);
 
 	if(mHaveObstacleContact) {
-		lReturnValue = max(lReturnValue, mObstacleTop - mShapeBottom);
+		lReturnValue = std::max(lReturnValue, mObstacleTop - mShapeBottom);
 	}
 
 	return lReturnValue;
@@ -61,7 +63,7 @@ MR_Int32 ObstacleCollisionReport::CeilingStepHeight() const
 	ASSERT(mInMaze);
 
 	if(mHaveObstacleContact) {
-		lReturnValue = max(lReturnValue, mShapeTop - mObstacleBottom);
+		lReturnValue = std::max(lReturnValue, mShapeTop - mObstacleBottom);
 	}
 	return lReturnValue;
 }
@@ -153,8 +155,8 @@ void ObstacleCollisionReport::GetContactWithObstacles(
 				pLevel->GetRoomContact(lNextRoom, pShape, lNextSpec);
 
 				if(lNextSpec.mTouchingRoom) {
-					mClosestFloor = min(mClosestFloor, lNextSpec.mDistanceFromFloor);
-					mClosestCeiling = min(mClosestCeiling, lNextSpec.mDistanceFromCeiling);
+					mClosestFloor = std::min(mClosestFloor, lNextSpec.mDistanceFromFloor);
+					mClosestCeiling = std::min(mClosestCeiling, lNextSpec.mDistanceFromCeiling);
 
 					GetContactWithFeaturesAndActors(pLevel, pShape, lNextRoom, pElement, pIgnoreActors);
 
@@ -187,8 +189,8 @@ void ObstacleCollisionReport::GetContactWithFeaturesAndActors(
 		for(lCounter = 0; lCounter < pLevel->GetFeatureCount(pRoom); lCounter++) {
 			if(pLevel->GetFeatureContact(pLevel->GetFeature(pRoom, lCounter), pShape, lSpec)) {
 				if(mHaveObstacleContact) {
-					mObstacleBottom = min(mObstacleBottom, lSpec.mZMin);
-					mObstacleTop = max(mObstacleTop, lSpec.mZMax);
+					mObstacleBottom = std::min(mObstacleBottom, lSpec.mZMin);
+					mObstacleTop = std::max(mObstacleTop, lSpec.mZMax);
 				}
 				else {
 					mHaveObstacleContact = TRUE;
@@ -216,8 +218,8 @@ void ObstacleCollisionReport::GetContactWithFeaturesAndActors(
 					if(lObstacleShape != NULL) {
 						if(DetectActorContact(pShape, lObstacleShape, lSpec)) {
 							if(mHaveObstacleContact) {
-								mObstacleBottom = min(mObstacleBottom, lSpec.mZMin);
-								mObstacleTop = max(mObstacleTop, lSpec.mZMax);
+								mObstacleBottom = std::min(mObstacleBottom, lSpec.mZMin);
+								mObstacleTop = std::max(mObstacleTop, lSpec.mZMax);
 							}
 							else {
 								mHaveObstacleContact = TRUE;

@@ -180,8 +180,8 @@ void MenuScene::IncrementSelection(int amount) {
 }
 
 void MenuScene::Select() {
-	SoundServer::Play(lapSound);
-	
+    SoundServer::Play(lapSound);
+    
 	if (menuState == MAINMENU) {
 		if (menuSelection == 0) {
 			StartSelectPlayers();

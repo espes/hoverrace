@@ -22,9 +22,9 @@
 // and limitations under the License.
 //
 
-#include "StdAfx.h"
+#include "../StdAfx.h"
 
-#include "../../engine/Exception.h"
+#include "../../../engine/Exception.h"
 
 #include "ConsoleActions.h"
 

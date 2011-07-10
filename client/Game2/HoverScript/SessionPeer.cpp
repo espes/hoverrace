@@ -22,7 +22,7 @@
 
 #include "StdAfx.h"
 
-#include "../../engine/Script/Core.h"
+#include "../../../engine/Script/Core.h"
 #include "../ClientSession.h"
 
 #include "SessionPeer.h"

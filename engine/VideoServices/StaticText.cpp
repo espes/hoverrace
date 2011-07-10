@@ -211,6 +211,8 @@ void StaticText::Update()
 	DeleteObject(stdFont);
 
 	DeleteDC(hdc);
+#else
+	//TODO: Font rendering on *nix
 #endif
 
 	// Apply effect (we might refactor this out).

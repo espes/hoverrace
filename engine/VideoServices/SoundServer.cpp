@@ -39,6 +39,8 @@
 #include "../Util/MR_Types.h"
 #include "../Util/Config.h"
 
+#include <algorithm>
+
 #include "SoundServer.h"
 
 using HoverRace::Util::Config;
@@ -500,8 +502,8 @@ void ContinuousSound::CumPlay(int pCopy, int pDB, double pSpeed)
 	}
 
 	mOn[pCopy] = TRUE;
-	mMaxDB[pCopy] = max(mMaxDB[pCopy], pDB);
-	mMaxSpeed[pCopy] = max(mMaxSpeed[pCopy], pSpeed);
+	mMaxDB[pCopy] = std::max(mMaxDB[pCopy], pDB);
+	mMaxSpeed[pCopy] = std::max(mMaxSpeed[pCopy], pSpeed);
 
 }
 

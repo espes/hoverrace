@@ -4,7 +4,7 @@
 // class.  It contains all the code to control input devices; joysticks, 
 // keyboards, and the like.
 
-#include "StdAfx.h"
+#include "../StdAfx.h"
 
 #ifndef _WIN32
 #	include "SDL/SDLInputManager.h"
