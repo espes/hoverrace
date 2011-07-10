@@ -180,6 +180,8 @@ void MenuScene::IncrementSelection(int amount) {
 }
 
 void MenuScene::Select() {
+	SoundServer::Play(lapSound);
+	
 	if (menuState == MAINMENU) {
 		if (menuSelection == 0) {
 			StartSelectPlayers();
@@ -201,8 +203,6 @@ void MenuScene::Select() {
 			client->NewSplitSession(selectedPlayers, rules);
 		}
 	}
-	
-	SoundServer::Play(lapSound);
 }
 
 void MenuScene::Advance(Util::OS::timestamp_t tick)
